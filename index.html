@@ -21,12 +21,13 @@
     try {
       device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
-        //optionalServices: ['12345678-1234-1234-1234-1234567890ab']
+        optionalServices: ['d633fc4a-9b43-4f0c-a650-fca79029c70b']
       });
       server = await device.gatt.connect();
-      service = await server.getPrimaryService('12345678-1234-1234-1234-1234567890ab');
-      txCharacteristic = await service.getCharacteristic('12345678-1234-1234-1234-1234567890ad');
-      rxCharacteristic = await service.getCharacteristic('12345678-1234-1234-1234-1234567890ac');
+      putError('server:', JSON.stringify(server));
+      service = await server.getPrimaryService('d633fc4a-9b43-4f0c-a650-fca79029c70b');
+      txCharacteristic = await service.getCharacteristic('859ed99c-fa53-40df-9900-f23bacbd257d');
+      rxCharacteristic = await service.getCharacteristic('d5e37bdd-d07b-459f-82c6-66f689bc946a');
       putError('Connected to ESP32!');
 
       txCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
