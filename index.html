@@ -21,7 +21,7 @@
     try {
       device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
-        optionalServices: ['d633fc4a-9b43-4f0c-a650-fca79029c70b']
+        services: ['d633fc4a-9b43-4f0c-a650-fca79029c70b']
       });
       server = await device.gatt.connect();
       putError('server:', JSON.stringify(server));
