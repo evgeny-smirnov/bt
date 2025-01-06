@@ -1,0 +1,15 @@
+{
+  "name": "bt",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "gh-pages -d ./ -r https://github.com/evgeny-smirnov/bt"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
+}

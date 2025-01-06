@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="connect">Connect to ESP32</button>
+<button id="send">Send Data</button>
+<input id="ledPower" type="range" min="0" max="255" value="0" />
+</body>
+<script>
+  let device;
+  let server;
+  let service;
+  let txCharacteristic;
+  let rxCharacteristic;
+
+  async function connect() {
+    try {
+      device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['12345678-1234-1234-1234-1234567890ab']
+      });
+      server = await device.gatt.connect();
+      service = await server.getPrimaryService('12345678-1234-1234-1234-1234567890ab');
+      txCharacteristic = await service.getCharacteristic('12345678-1234-1234-1234-1234567890ad');
+      rxCharacteristic = await service.getCharacteristic('12345678-1234-1234-1234-1234567890ac');
+      console.log('Connected to ESP32!');
+
+      txCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
+        let value = new TextDecoder().decode(event.target.value);
+        console.log('Received:', value);
+      });
+      await txCharacteristic.startNotifications();
+    } catch (error) {
+      console.error('Connection failed', error);
+    }
+  }
+
+  async function sendData(data) {
+    if (!rxCharacteristic) {
+      console.error('Not connected!');
+      return;
+    }
+    const encoder = new TextEncoder();
+    await rxCharacteristic.writeValue(encoder.encode(data));
+    console.log('Sent:', data);
+  }
+
+  document.querySelector('#connect').addEventListener('click', connect);
+  document.querySelector('#send').addEventListener('click', () => sendData('Hello from Browser'));
+  document.querySelector('#ledPower').addEventListener('change', (e) => {
+    const ledPower = parseInt(e.target.value);
+    console.log('ledPower', ledPower);
+    if(!isNaN(ledPower)) {
+      sendData('SET_LED '+ledPower);
+    }
+  })
+
+</script>
+</html>
