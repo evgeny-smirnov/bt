@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "gh-pages -d ./ -r https://github.com/evgeny-smirnov/bt"
+    "deploy": "gh-pages -d ./ -v ./.idea -r https://github.com/evgeny-smirnov/bt",
+    "deployh": "gh-pages -h"
   },
   "author": "",
   "license": "ISC",
