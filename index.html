@@ -8,6 +8,7 @@
 <button id="connect">Connect to ESP32</button>
 <button id="send">Send Data</button>
 <input id="ledPower" type="range" min="0" max="255" value="0" />
+<pre id="output"></pre>
 </body>
 <script>
   let device;
@@ -26,37 +27,45 @@
       service = await server.getPrimaryService('12345678-1234-1234-1234-1234567890ab');
       txCharacteristic = await service.getCharacteristic('12345678-1234-1234-1234-1234567890ad');
       rxCharacteristic = await service.getCharacteristic('12345678-1234-1234-1234-1234567890ac');
-      console.log('Connected to ESP32!');
+      putError('Connected to ESP32!');
 
       txCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
         let value = new TextDecoder().decode(event.target.value);
-        console.log('Received:', value);
+        putError('Received:', value);
       });
       await txCharacteristic.startNotifications();
     } catch (error) {
-      console.error('Connection failed', error);
+      putError('Connection failed', error);
     }
   }
 
   async function sendData(data) {
     if (!rxCharacteristic) {
-      console.error('Not connected!');
+      putError('Not connected!');
       return;
     }
     const encoder = new TextEncoder();
     await rxCharacteristic.writeValue(encoder.encode(data));
-    console.log('Sent:', data);
+    putError('Sent:', data);
   }
 
   document.querySelector('#connect').addEventListener('click', connect);
   document.querySelector('#send').addEventListener('click', () => sendData('Hello from Browser'));
   document.querySelector('#ledPower').addEventListener('change', (e) => {
     const ledPower = parseInt(e.target.value);
-    console.log('ledPower', ledPower);
+    putError('ledPower', ledPower);
     if(!isNaN(ledPower)) {
       sendData('SET_LED '+ledPower);
     }
   })
+
+  function putError(...e) {
+    const output = document.querySelector('#output');
+    if(!output) {
+      return;
+    }
+    output.innerHTML += JSON.stringify(e, null, 2);
+  }
 
 </script>
 </html>
